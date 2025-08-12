@@ -57,58 +57,41 @@ export default function AddDataSource() {
       setError('Please enter a SQL query');
       return;
     }
-
+  
     setIsLoading(true);
     setError('');
-    setQueryResult(null); // Clear previous result
-    setPendingDataSource(''); // Clear pending data
-    
+    setQueryResult(null);
+    setPendingDataSource('');
+  
     try {
-      const response = await axios.post('http://localhost:3002/api/execute-query', {
-        query: sqlQuery
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-        }
+      const response = await axios.post('http://localhost:3002/api/query', {
+        sql: sqlQuery
       });
-
-      const result: QueryResult = response.data;
-      
+  
+      const result = response.data;
       if (result.success) {
         setQueryResult(result);
-        
-        // Generate unique data source name for this query
         const uniqueDSName = `query_${queryCounter}`;
         setQueryCounter(prev => prev + 1);
-        
-        // Store result data in pending area (not yet saved to data source)
         const resultData = JSON.stringify(result.data, null, 2);
         setPendingDataSource(resultData);
-        
-        // Auto-generate suggested data source name
         setNewDSName(uniqueDSName);
-        
       } else {
         setError(result.error || 'Query execution failed');
-        setQueryResult(null);
-        setPendingDataSource('');
       }
     } catch (err) {
       let errorMessage = 'Failed to execute query';
-      
       if (axios.isAxiosError(err)) {
         errorMessage = err.response?.data?.error || err.message || errorMessage;
       } else if (err instanceof Error) {
         errorMessage = err.message;
       }
-      
       setError(errorMessage);
-      setQueryResult(null);
-      setPendingDataSource('');
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   // Save pending data to selected or new data source
   const savePendingData = (): void => {

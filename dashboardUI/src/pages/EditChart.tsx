@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { useParams } from "react-router-dom";
-import { ChevronDown, ChevronRight, Database, Code, BarChart3, LucideIcon } from 'lucide-react';
+import { ChevronDown, ChevronRight, Database, Code, BarChart3, LucideIcon, Zap } from 'lucide-react';
 import JsCompiler from "../components/JsCompiler";
 import AddDataSource from "../components/AddDataSource";
 import HighChartField from "../components/HighChartField";
+import Hooks from '../components/Hooks';
 
 // Define the shape of our sections state
 interface SectionsState {
   dataSource: boolean;
   jsCompiler: boolean;
+  hooks:boolean;
   highChart: boolean;
 }
 
@@ -74,6 +76,7 @@ const EditChart: React.FC = () => {
   const [openSections, setOpenSections] = useState<SectionsState>({
     dataSource: true,  // Default to open
     jsCompiler: false,
+    hooks:false,
     highChart: false
   });
 
@@ -94,6 +97,7 @@ const EditChart: React.FC = () => {
     setOpenSections({
       dataSource: newState,
       jsCompiler: newState,
+      hooks:newState,
       highChart: newState
     });
   };
@@ -127,6 +131,15 @@ const EditChart: React.FC = () => {
         </CollapsibleSection>
 
         <CollapsibleSection
+          title="Hooks for Complex Calculations"
+          icon={Zap}
+          isOpen={openSections.hooks}
+          onToggle={() => toggleSection('hooks')}
+        >
+          <Hooks/>
+        </CollapsibleSection>
+
+        <CollapsibleSection
           title="Chart Configuration"
           icon={BarChart3}
           isOpen={openSections.highChart}
@@ -134,6 +147,7 @@ const EditChart: React.FC = () => {
         >
           <HighChartField />
         </CollapsibleSection>
+        
       </div>
 
       {/* Optional: Toggle all button */}
